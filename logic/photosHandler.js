@@ -18,7 +18,11 @@ exports.addIntoAPhotoTable = function (userName, photoName, photoPath) {
                 throw error;
             }
             if(photoName=='' || photoPath=='') {
-                
+                async.series(
+                    function (error, results) {
+                        if (error) util.log('ERROR ' + error);
+                    }
+                );
             } else {
                 async.series([  //async.series函数可以控制函数按顺序执行，从而保证最后的函数在所有其他函数完成之后执行
                         function (cb) {

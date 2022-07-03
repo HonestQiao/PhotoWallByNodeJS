@@ -17,22 +17,22 @@ router.route("/login").get(function (req, res) {    // 到达此路径则渲染l
     // console.log("userName:"+userName);
     usersHandler.loginAUser([userName, password], function (error,loginStatus,user) {
         if (loginStatus === 0) {
-            res.send(500);
+            res.sendStatus(500);
             req.session.error = '网络异常错误！';
             console.log(error);
         }
         else if(loginStatus===1){
             req.session.error = '登录成功！';
             req.session.user = user;
-            res.send(200);
+            res.sendStatus(200);
         }
         else if(loginStatus===2){
             req.session.error = '用户名不存在！';
-            res.send(404);
+            res.sendStatus(404);
         }
         else{
             req.session.error = '密码错误！';
-            res.send(404);
+            res.sendStatus(404);
         }
     });
 
@@ -68,20 +68,25 @@ router.route("/register").get(function (req, res) {    // 到达此路径则渲�
 }).post(function (req, res) {
     var userName = req.body.userName;
     var password = req.body.password;
+    var is_load = false;
     usersHandler.addAUser([userName, password], function (error,addStatus) {
+        if(is_load) {
+            return;
+        }
+        is_load = true;
         photosHandler.addIntoAPhotoTable(userName, '', '');
         if (addStatus === 0) {
-            res.send(500);
+            res.sendStatus(500);
             req.session.error = '网络异常错误！';
             console.log(error);
         }
         else if(addStatus===1){
             req.session.error = '用户名创建成功！';
-            res.send(200);
+            res.sendStatus(200);
         }
         else{
             req.session.error = '用户名已存在！';
-            res.send(500);
+            res.sendStatus(500);
         }
     });
     // User.findOne({name: uname}, function (err, doc) {   // 同理 /login 路径的处理方式
