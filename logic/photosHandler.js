@@ -17,19 +17,29 @@ exports.addIntoAPhotoTable = function (userName, photoName, photoPath) {
                 util.log('ERROR ' + error);
                 throw error;
             }
-            async.series([  //async.series函数可以控制函数按顺序执行，从而保证最后的函数在所有其他函数完成之后执行
-                    function (cb) {
-                        sqliteHelper.add(tableName, ["photoName", "photoPath"], [photoName, photoPath],
-                            function (error) {
-                                if (error) util.log('ERROR ' + error);
-                                cb(error);
-                            });
+            if(photoName=='' || photoPath=='') {
+                
+            } else {
+                async.series([  //async.series函数可以控制函数按顺序执行，从而保证最后的函数在所有其他函数完成之后执行
+                        function (cb) {
+                            sqliteHelper.add(tableName, ["photoName", "photoPath"], [photoName, photoPath],
+                                function (error) {
+                                    if (error) util.log('ERROR ' + error);
+                                    cb(error);
+                                });
+                        },function (cb) {
+                            sqliteHelper.add("all_photos", ["userName", "photoName", "photoPath"], [userName, photoName, photoPath],
+                                function (error) {
+                                    if (error) util.log('ERROR ' + error);
+                                    cb(error);
+                                });
+                        }
+                    ],
+                    function (error, results) {
+                        if (error) util.log('ERROR ' + error);
                     }
-                ],
-                function (error, results) {
-                    if (error) util.log('ERROR ' + error);
-                }
-            );
+                );
+            }
         });
 }
 
@@ -64,4 +74,26 @@ exports.deleteUserPhoto = function (userName, photoPath, callback) {
             callback(null);
         }
     })
+}
+
+/*
+获得所以用户的所有照片路径
+ */
+exports.getAllUserPhotoPaths = function (num, callback) {
+    let userPhotoTableName = "all_photos";
+    let userPhotoPaths = [];
+    sqliteHelper.forAll(userPhotoTableName, function (error, userPhoto) {
+        userPhotoPaths.push({
+            userName:userPhoto.photoPath,
+            photoPath:userPhoto.photoPath
+        });
+    }, function (error) {
+        if (error) {
+            util.log('Fail on get photoPaths because of error:' + error);
+            callback(error, null);
+        }
+        else {
+            callback(null, userPhotoPaths);
+        }
+    });
 }

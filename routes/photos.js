@@ -2,13 +2,42 @@ var express = require('express');
 var router = express.Router();
 var photosHandler = require('../logic/photosHandler');
 var async = require('async');
+var util = require('util');
+var path = require('path');
 var formidable = require('formidable'),
     fs = require('fs'),
     TITLE = 'photos上传',
     PHOTOS_UPLOAD_FOLDER = '/photos/',
     PHOTOS_TEMP_FOLDER = '/temp/',
-    PHOTOS_ABSOLUTE_FOLDER = "D:\\workspace\\web_exploring\\NodeJS\\PhotoWall\\public\\photos\\",
-    domain = "http://localhost:3000";
+    PHOTOS_ABSOLUTE_FOLDER = path.dirname(path.dirname(__filename)),
+    domain = "/";
+    
+fs.exists(PHOTOS_ABSOLUTE_FOLDER+'/public/'+PHOTOS_TEMP_FOLDER, function (exists) {
+    if (!exists) {
+        // console.log('文件夹不存在');
+        fs.mkdir(PHOTOS_ABSOLUTE_FOLDER+'/public/'+PHOTOS_TEMP_FOLDER, function (err) {
+            if (err)
+                console.error(err);
+            // console.log('创建目录成功');
+        });
+    }
+    else {
+        // console.log('文件夹存在');
+    }
+});
+fs.exists(PHOTOS_ABSOLUTE_FOLDER+'/public/'+PHOTOS_UPLOAD_FOLDER, function (exists) {
+    if (!exists) {
+        // console.log('文件夹不存在');
+        fs.mkdir(PHOTOS_ABSOLUTE_FOLDER+'/public/'+PHOTOS_UPLOAD_FOLDER, function (err) {
+            if (err)
+                console.error(err);
+            // console.log('创建目录成功');
+        });
+    }
+    else {
+        // console.log('文件夹存在');
+    }
+});
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -29,7 +58,7 @@ router.route("/myPhotos").get(function (req, res) {
 }).post(function (req, res) {
     let form = new formidable.IncomingForm();   //创建上传表单
     form.encoding = 'utf-8';        //设置编辑
-    form.uploadDir = 'public' + PHOTOS_TEMP_FOLDER;     //设置上传文件的缓存目录
+    form.uploadDir = PHOTOS_ABSOLUTE_FOLDER+'/public/' + PHOTOS_TEMP_FOLDER;     //设置上传文件的缓存目录
     form.keepExtensions = true;     //保留后缀
     form.maxFieldsSize = 2 * 1024 * 1024;   //文件大小
 
@@ -81,7 +110,7 @@ router.route("/myPhotos").get(function (req, res) {
             //显示地址；
             let showUrl = domain + userPhotoPath + photoName;
             //用户照片文件夹的绝对路径，因为fs.mkdir创建文件夹必须使用绝对路径
-            let userPhotoFolderPath = PHOTOS_ABSOLUTE_FOLDER + res.locals.user.userName;
+            let userPhotoFolderPath = PHOTOS_ABSOLUTE_FOLDER+'/public/'+PHOTOS_UPLOAD_FOLDER + res.locals.user.userName;
             async.series([  //async.series函数可以控制函数按顺序执行，从而保证最后的函数在所有其他函数完成之后执行
                     function (cb) {
                         //判断用户的照片文件夹是否存在，不存在就创建一个

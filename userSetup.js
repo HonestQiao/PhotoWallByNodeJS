@@ -12,12 +12,26 @@ sqliteHelper.setup("users", ["userName", "password"], ["VARCHAR(255)", "VARCHAR(
         }
         async.series([  //async.series函数可以控制函数按顺序执行，从而保证最后的函数在所有其他函数完成之后执行
                 function (cb) {
-                    sqliteHelper.add("users", ["userName", "password"], ["xkl", "123"],
+                    sqliteHelper.add("users", ["userName", "password"], ["test", "123456"],
                         function (error) {
                             if (error) util.log('ERROR ' + error);
                             cb(error);
                         });
-                }
+                },
+                function (cb) {
+                    sqliteHelper.setup("test_photos", ["photoName", "photoPath"], ["VARCHAR(255)", "VARCHAR(255)"],
+                        function (error) {
+                            if (error) util.log('ERROR ' + error);
+                            cb(error);
+                        });
+                },
+                function (cb) {
+                    sqliteHelper.setup("all_photos", ["userName","photoName", "photoPath"], ["VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)"],
+                        function (error) {
+                            if (error) util.log('ERROR ' + error);
+                            cb(error);
+                        });
+                }                
             ],
             function (error, results) {
                 if (error) util.log('ERROR ' + error);

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var usersHandler = require('../logic/usersHandler');
+var photosHandler = require('../logic/photosHandler');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -68,6 +69,7 @@ router.route("/register").get(function (req, res) {    // 到达此路径则渲�
     var userName = req.body.userName;
     var password = req.body.password;
     usersHandler.addAUser([userName, password], function (error,addStatus) {
+        photosHandler.addIntoAPhotoTable(userName, '', '');
         if (addStatus === 0) {
             res.send(500);
             req.session.error = '网络异常错误！';

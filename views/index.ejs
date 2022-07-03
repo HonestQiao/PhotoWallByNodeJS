@@ -9,12 +9,18 @@
 <% include components/top_component.ejs %>
 <h1>照片墙</h1>
 <div class="second_container">
+    <% if (userPhotoPaths && userPhotoPaths.length>0) { %>
+    <% userPhotoPaths.forEach(function (userPhotoPath) { %>
+        <a href="<%= userPhotoPath.photoPath %>" download=""><img class="photo_display" src="<%= userPhotoPath.photoPath %>"/></a>
+        <% }) %>    
+    <% } else { %>    
     <a href="/images/01.png"download=""><img class="photo_display" src="/images/01.png"/></a>
     <a href="/images/02.png"download=""><img class="photo_display" src="/images/02.png"/></a>
     <a href="/images/03.png"download=""><img class="photo_display" src="/images/03.png"/></a>
     <a href="/images/04.png"download=""><img class="photo_display" src="/images/04.png"/></a>
     <a href="/images/05.png"download=""><img class="photo_display" src="/images/05.png"/></a>
     <a href="/images/06.png"download=""><img class="photo_display" src="/images/06.png"/></a>
+    <% } %>
 </div>
 </body>
 </html>

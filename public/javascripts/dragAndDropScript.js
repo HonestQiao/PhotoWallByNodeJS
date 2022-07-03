@@ -14,7 +14,7 @@ $(function () {
             // console("photoPath:" + photoPath);
             //向服务器发送删除照片的post请求
             $.ajax({
-                url: "http://localhost:3000/photos/myPhotos/delete",
+                url: "/photos/myPhotos/delete",
                 type: 'POST',
                 data: {"photoPath": $(ui.draggable).attr("src")},
 

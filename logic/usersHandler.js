@@ -49,6 +49,29 @@ exports.addAUser = function (values, callback) {
             cb();
         }
 
+    }, function (cb) {
+        //顺序执行的代码三
+        //0代表error,1代表成功添加用户,2代表用户已存在无法添加
+        if (user === null) {
+            sqliteHelper.add("users", colNames, values,
+                function (error) {
+                    if (error) {
+                        util.log('Fail on add a user:' + values[0] + 'because of error:' + error);
+                        callback(error, 0);
+                    }
+                    else {
+                        callback(null, 1);
+                        // console.log("exist");
+                    }
+                    //回调函数中也要传入cb，否则如果cb放在回调函数之外则无法完成同步
+                    cb(error);
+                });
+        }
+        else {
+            callback(null, 2);
+            cb();
+        }
+
     }], function (error, values) {
         // console.log("zzz")
         if (error) throw error;
